@@ -6,6 +6,22 @@ The implementation is fully contained in [model.py](model.py) (~300 lines of cod
 
 The architecture of the model is diagrammed below:
 
+- batched samples are tokenized using a simple character-based model
+- the tokens are embedded in a 384 dimension matrix
+- the position of each token in the sample is encoded in a separate 384 dimension matrix and added
+- the output is fed into a block several times where each block contains:
+    - a multi-head attention layer including a linear, dropout, and layer norm layer
+    - the output of the multi-head attention layer is added back to its input
+    - it then flows through a feedforward layer consisting of linear, ReLU, linear, dropout and layer norm layers
+    - its input and then added back to th e output
+- after passing several times through the block, the output is passed through layer norm and linear layers resulting in logits
+- applying softmax to the logits produces probabilities that can be used for generation
+- in training, the cross-entropy loss is computed from the logits and known targets (not shown in diagram), and AdamW is used to optimize the parameters
+
+<br>
+
+![diagram](assets/diagram.svg)
+
 
 ## Installation
 
